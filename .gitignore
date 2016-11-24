@@ -50,3 +50,4 @@ Module.symvers
 Mkfile.old
 dkms.conf
 main.c.dev
+main.c.layout
