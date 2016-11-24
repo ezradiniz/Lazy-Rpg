@@ -2,13 +2,6 @@
 
 int main(void)
 {
-<<<<<<< HEAD
-    printf("Olá Mundo\n");
-    printf("TESTE\n");
-=======
-    printf("Hello World");
-    printf("Teste");
-
->>>>>>> origin/master
+	printf("LOL > DOTA\n");
     return 0;
 }
