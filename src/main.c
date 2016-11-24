@@ -2,6 +2,6 @@
 
 int main(void)
 {
-	printf("LOL > DOTA\n");
+	printf("teste\n");
     return 0;
 }
