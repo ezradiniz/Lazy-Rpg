@@ -51,3 +51,5 @@ Mkfile.old
 dkms.conf
 main.c.dev
 main.c.layout
+main.c
+Makefile.win
