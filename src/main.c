@@ -3,8 +3,9 @@
 #include "util.h"
 #include "fireball.h"
 #include "mage.h"
+#include "world.h"
 
-int main(void)
+int main(int argc, char *argv[])
 {
     SDL_Event e;
 
@@ -12,6 +13,7 @@ int main(void)
 
     game_init();
 
+    world_t *world = init_world();
     mage_t *mage = init_mage();
     fireball_t **fireballs = mage->fireballs;
 
@@ -30,7 +32,8 @@ int main(void)
                         mage->direction = -1;
                         break;
                     case SDLK_SPACE:
-                       // mage->attack = 1;
+                        mage->startTime = SDL_GetTicks();
+                       mage->attack = 1;
                         break;
                                    }
             }else if (e.type == SDL_KEYUP) {
@@ -47,7 +50,7 @@ int main(void)
                         mage->jumping = 1;
                         break;
                      case SDLK_SPACE:
-                        mage->attack = 1;
+                        //mage->attack = 1;
                         break;
 
 
@@ -57,6 +60,8 @@ int main(void)
         }
         SDL_SetRenderDrawColor(wRenderer, 0, 0, 0, 0);
         SDL_RenderClear(wRenderer);
+
+        world->update(world);
 
         mage->update(mage);
 

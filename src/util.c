@@ -51,6 +51,11 @@ void game_renderTexture(int x, int y,
     SDL_RenderCopyEx(wRenderer, texture, clip, &render, angle, center, flip);
 }
 
+Uint32 game_animation_frame(Uint32 oldTime, int animation, int game, int max)
+{
+    return ((SDL_GetTicks() - oldTime) * animation/ game) % max;
+}
+
 void game_close()
 {
     SDL_DestroyRenderer(wRenderer);

@@ -111,18 +111,18 @@ void _update(mage_t *mage)
     int i=0;
 
     if (mage->attack == 1) {
-         mage->frame = ((newTime - mage->startTime) * 6 /1200) % CASTING_FRAMES;
+         Uint32 frame = ((newTime - mage->startTime) * 6 /1200) % CASTING_FRAMES;
          game_renderTexture(mage->x,
                         mage->y,
                         71,
                         71,
-                        &mage->castSpriteClips[mage->frame],
+                        &mage->castSpriteClips[frame],
                         360,
                         NULL,
                         (mage->direction == 1) ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL,
                         mage->texture);
-         mage->casting = ((newTime - mage->startTime)*6/1500) % CASTING_FRAMES+1;
-        if (mage->casting != CASTING_FRAMES) {
+        mage->frame = ((newTime - mage->startTime)*6/1000) % CASTING_FRAMES+1;
+         if (mage->frame != CASTING_FRAMES) {
              mage->attack = 1;
          }else {
 
@@ -205,8 +205,8 @@ mage_t *init_mage()
     mage_t *mage = malloc(sizeof(mage_t));
     mage->frame = 0;
     mage->x = 200;
-    mage->y = 300;
-    mage->h = 300;
+    mage->y = 50;
+    mage->h = 200;
     mage->jumping = 0;
     mage->startTime = SDL_GetTicks();
     mage->speed = 0;
