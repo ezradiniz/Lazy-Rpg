@@ -34,9 +34,7 @@ static void _loadMedia(fireball_t *fireball)
 
 static void _update(fireball_t *fireball)
 {
-     Uint32 newTime = SDL_GetTicks();
-    int frame = ((newTime - fireball->startTime) * 4 /500) % FIREBALL_FRAMES;
-
+    int frame = game_animation_frame(fireball->startTime, 4, 500, FIREBALL_FRAMES);
     SDL_Rect *current = &fireball->spriteClips[frame];
 
     if (fireball->direction == 1) {
@@ -64,6 +62,15 @@ static void _update(fireball_t *fireball)
      fireball->x -= FIREBALL_SPEED;
 
     }
+    game_renderTexture(fireball->x,
+                       fireball->y,
+                       29,
+                       35,
+                       current,
+                       360,
+                       NULL,
+                       (fireball->direction == 1) ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL,
+                       fireball->texture);
 
 }
 

@@ -19,6 +19,7 @@ void game_renderTexture(int x, int y,
                         SDL_Point *center,
                         SDL_RendererFlip flip,
                         SDL_Texture *texture);
+Uint32 game_animation_frame(Uint32 oldTime, int animation, int game, int max);
 void game_close();
 
 #endif

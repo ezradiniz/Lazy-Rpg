@@ -32,7 +32,8 @@ int main(int argc, char *argv[])
                         mage->direction = -1;
                         break;
                     case SDLK_SPACE:
-                        mage->startTime = SDL_GetTicks();
+                        if (mage->attack != 1)
+                            mage->startTime = SDL_GetTicks();
                        mage->attack = 1;
                         break;
                                    }
@@ -47,13 +48,9 @@ int main(int argc, char *argv[])
                         mage->speed = 0;
                         break;
                      case SDLK_UP:
+                        mage->startTime = SDL_GetTicks();
                         mage->jumping = 1;
                         break;
-                     case SDLK_SPACE:
-                        //mage->attack = 1;
-                        break;
-
-
 
                 }
             }

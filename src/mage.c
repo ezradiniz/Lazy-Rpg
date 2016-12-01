@@ -9,49 +9,29 @@ static void _mageLoadMedia(mage_t *mage)
     mage->texture = game_loadTexture("img/mage.png");
 
     // walk
-    mage->walkSpriteClips[0].x = 48;
-    mage->walkSpriteClips[0].y = 14;
+
+    mage->walkSpriteClips[0].x = 26;
+    mage->walkSpriteClips[0].y = 104;
     mage->walkSpriteClips[0].w = 71;
     mage->walkSpriteClips[0].h = 71;
 
-    mage->walkSpriteClips[1].x = 124;
-    mage->walkSpriteClips[1].y = 14;
+    mage->walkSpriteClips[1].x = 106;
+    mage->walkSpriteClips[1].y = 104;
     mage->walkSpriteClips[1].w = 71;
     mage->walkSpriteClips[1].h = 71;
 
-    mage->walkSpriteClips[2].x = 200;
-    mage->walkSpriteClips[2].y = 14;
+    mage->walkSpriteClips[2].x = 187;
+    mage->walkSpriteClips[2].y = 104;
     mage->walkSpriteClips[2].w = 71;
     mage->walkSpriteClips[2].h = 71;
 
-    mage->walkSpriteClips[3].x = 26;
+    mage->walkSpriteClips[3].x = 265;
     mage->walkSpriteClips[3].y = 104;
     mage->walkSpriteClips[3].w = 71;
     mage->walkSpriteClips[3].h = 71;
 
-    mage->walkSpriteClips[4].x = 106;
-    mage->walkSpriteClips[4].y = 104;
-    mage->walkSpriteClips[4].w = 71;
-    mage->walkSpriteClips[4].h = 71;
-
-    mage->walkSpriteClips[5].x = 187;
-    mage->walkSpriteClips[5].y = 104;
-    mage->walkSpriteClips[5].w = 71;
-    mage->walkSpriteClips[5].h = 71;
-
-    mage->walkSpriteClips[6].x = 265;
-    mage->walkSpriteClips[6].y = 104;
-    mage->walkSpriteClips[6].w = 71;
-    mage->walkSpriteClips[6].h = 71;
-
     // jump
 
-    /*
-    mage->jumpSpriteClips[0].x = 23;
-    mage->jumpSpriteClips[0].y = 196;
-    mage->jumpSpriteClips[0].w = 71;
-    mage->jumpSpriteClips[0].h = 71;
-    */
     mage->jumpSpriteClips[0].x = 94;
     mage->jumpSpriteClips[0].y = 196;
     mage->jumpSpriteClips[0].w = 71;
@@ -101,66 +81,103 @@ static void _mageLoadMedia(mage_t *mage)
     mage->castSpriteClips[5].h = 71;
 
 
+    //stoped
+    mage->stopSpriteClips[0].x = 48;
+    mage->stopSpriteClips[0].y = 14;
+    mage->stopSpriteClips[0].w = 71;
+    mage->stopSpriteClips[0].h = 71;
+
+    mage->stopSpriteClips[1].x = 124;
+    mage->stopSpriteClips[1].y = 14;
+    mage->stopSpriteClips[1].w = 71;
+    mage->stopSpriteClips[1].h = 71;
+
+    mage->stopSpriteClips[2].x = 200;
+    mage->stopSpriteClips[2].y = 14;
+    mage->stopSpriteClips[2].w = 71;
+    mage->stopSpriteClips[2].h = 71;
 
 }
 
 void _update(mage_t *mage)
 {
-    Uint32 newTime = SDL_GetTicks();
-
-    int i=0;
 
     if (mage->attack == 1) {
-         Uint32 frame = ((newTime - mage->startTime) * 6 /1200) % CASTING_FRAMES;
+         mage->frame = game_animation_frame(mage->startTime, 12, 1300, CASTING_FRAMES);
+
          game_renderTexture(mage->x,
                         mage->y,
                         71,
                         71,
-                        &mage->castSpriteClips[frame],
+                        &mage->castSpriteClips[mage->frame],
                         360,
                         NULL,
                         (mage->direction == 1) ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL,
                         mage->texture);
-        mage->frame = ((newTime - mage->startTime)*6/1000) % CASTING_FRAMES+1;
-         if (mage->frame != CASTING_FRAMES) {
+         if (mage->frame != CASTING_FRAMES-1) {
              mage->attack = 1;
          }else {
-
-               for (i=0; i<MAX_FIREBALLS; i++) {
-            if (mage->fireballs[i] == NULL) {
-                mage->fireballs[i] = init_fireball();
-                mage->fireballs[i]->x = mage->x + 28;
-                mage->fireballs[i]->y = mage->y + 17;
-                mage->fireballs[i]->direction = mage->direction;
-                break;
+            int i;
+             for (i=0; i<MAX_FIREBALLS; i++) {
+                 if (mage->fireballs[i] == NULL) {
+                     mage->fireballs[i] = init_fireball();
+                     mage->fireballs[i]->x = mage->x + 28;
+                     mage->fireballs[i]->y = mage->y + 17;
+                     mage->fireballs[i]->direction = mage->direction;
+                     break;
+                }
             }
-        }
-               mage->attack = 0;
-               mage->frame = 0;
-               mage->casting = 0;
+             mage->attack = 0;
+             mage->frame = 0;
+             mage->casting = 0;
          }
 
-    }else {
+    } else if (mage->speed != 0){
 
+        mage->frame = game_animation_frame(mage->startTime, 4, 500, WALKING_FRAMES);
 
+        SDL_Rect * current = &mage->walkSpriteClips[mage->frame];
 
-    if (mage->speed != 0)
-        mage->frame = ((newTime - mage->startTime) * 7 /500) % WALKING_FRAMES;
-    if (mage->frame / WALKING_FRAMES >= WALKING_FRAMES) {
-        mage->frame = 0;
-    }
+        if (mage->direction == 1) {
+             mage->x += mage->speed;
+        } else if (mage->direction == -1){
+             mage->x -= mage->speed;
+        }
 
-    SDL_Rect * current = &mage->walkSpriteClips[mage->frame];
-
-    if (mage->direction == 1) {
         if (mage->jumping == 1 && mage->y > mage->h-35) {
             mage->y -= 1;
-            mage->frame = ((newTime - mage->startTime) * 4 /500*GRAVITY) % JUMPING_FRAMES;
+            mage->frame = game_animation_frame(mage->startTime, 4, 500 * GRAVITY, JUMPING_FRAMES);
             current = &mage->jumpSpriteClips[mage->frame];
         }else if (mage->y < mage->h+35){
             mage->jumping = 0;
             mage->y += 1;
-             mage->frame = ((newTime - mage->startTime) * 4 /500*GRAVITY) % JUMPING_FRAMES;
+            mage->frame = game_animation_frame(mage->startTime, 4, 500 * GRAVITY, JUMPING_FRAMES);
+            current = &mage->jumpSpriteClips[mage->frame];
+        }
+
+        game_renderTexture(mage->x,
+                            mage->y,
+                            71,
+                            71,
+                            current,
+                            360,
+                            NULL,
+                            (mage->direction == 1) ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL,
+                            mage->texture);
+
+    } else {
+
+        mage->frame = game_animation_frame(mage->startTime, 5, 800, STOPPING_FRAMES);
+        SDL_Rect * current = &mage->stopSpriteClips[mage->frame];
+
+        if (mage->jumping == 1 && mage->y > mage->h-35) {
+            mage->y -= 1;
+            mage->frame = game_animation_frame(mage->startTime, 4, 500 * GRAVITY, JUMPING_FRAMES);
+            current = &mage->jumpSpriteClips[mage->frame];
+        }else if (mage->y < mage->h+35){
+            mage->jumping = 0;
+            mage->y += 1;
+            mage->frame = game_animation_frame(mage->startTime, 4, 500 * GRAVITY, JUMPING_FRAMES);
             current = &mage->jumpSpriteClips[mage->frame];
         }
 
@@ -171,32 +188,8 @@ void _update(mage_t *mage)
                         current,
                         360,
                         NULL,
-                        SDL_FLIP_NONE,
+                        (mage->direction == 1) ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL,
                         mage->texture);
-         mage->x += mage->speed;
-    } else if (mage->direction == -1){
-        if (mage->jumping == 1 && mage->y > mage->h-35) {
-            mage->y -= 1;
-            mage->frame = ((newTime - mage->startTime) * 4 /500*GRAVITY) % JUMPING_FRAMES;
-            current = &mage->jumpSpriteClips[mage->frame];
-        }else if (mage->y < mage->h+35){
-            mage->jumping = 0;
-            mage->y += 1;
-             mage->frame = ((newTime - mage->startTime) * 4 /500*GRAVITY) % JUMPING_FRAMES;
-            current = &mage->jumpSpriteClips[mage->frame];
-        }
-
-         game_renderTexture(mage->x,
-                        mage->y,
-                        71,
-                        71,
-                        current,
-                        360,
-                        NULL,
-                        SDL_FLIP_HORIZONTAL,
-                        mage->texture);
-             mage->x -= mage->speed;
-    }
     }
 }
 
@@ -205,8 +198,7 @@ mage_t *init_mage()
     mage_t *mage = malloc(sizeof(mage_t));
     mage->frame = 0;
     mage->x = 200;
-    mage->y = 50;
-    mage->h = 200;
+    mage->y = mage->h = 420;
     mage->jumping = 0;
     mage->startTime = SDL_GetTicks();
     mage->speed = 0;

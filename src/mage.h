@@ -5,9 +5,10 @@
 #include "fireball.h"
 #include <SDL2/SDL.h>
 
-#define WALKING_FRAMES 7
-#define JUMPING_FRAMES 4
+#define WALKING_FRAMES 4
+#define JUMPING_FRAMES 3
 #define CASTING_FRAMES 6
+#define STOPPING_FRAMES 3
 
 typedef struct mage mage_t;
 
@@ -15,15 +16,16 @@ struct mage {
     int x, y, h;
     int speed;
     short int jumping;
-    int direction;
-    int frame;
-    int attack;
-    int casting;
+    short int direction;
+    short int frame;
+    short int attack;
+    short int casting;
     long int startTime;
     SDL_Texture *texture;
     SDL_Rect walkSpriteClips[WALKING_FRAMES];
     SDL_Rect jumpSpriteClips[JUMPING_FRAMES];
     SDL_Rect castSpriteClips[CASTING_FRAMES];
+    SDL_Rect stopSpriteClips[STOPPING_FRAMES];
     fireball_t **fireballs;
     void (*update)(mage_t*);
 };

@@ -1,5 +1,5 @@
-#ifndef FIREBALL_H_
-#define FIREBALL_H_
+#ifndef AMMO_H_
+#define AMMO_H_
 
 #include <SDL2/SDL.h>
 
