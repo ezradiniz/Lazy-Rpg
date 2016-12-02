@@ -99,7 +99,7 @@ static void _mageLoadMedia(mage_t *mage)
 
 }
 
-void _update(mage_t *mage)
+static void _update(mage_t *mage)
 {
 
     if (mage->attack == 1) {
