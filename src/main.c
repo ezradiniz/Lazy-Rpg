@@ -15,7 +15,6 @@ int main(int argc, char *argv[])
     int quit = 0;
 
     game_init();
-    t_menu *menu = init_menu();
     world_t *world = init_world();
     mage_t *mage = init_mage();
     queue_t *queue_fireball = mage->fireballs;

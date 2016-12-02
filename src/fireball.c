@@ -38,30 +38,11 @@ static void _update(fireball_t *fireball)
     SDL_Rect *current = &fireball->spriteClips[frame];
 
     if (fireball->direction == 1) {
-        game_renderTexture(fireball->x,
-                       fireball->y,
-                       29,
-                       35,
-                       current,
-                       360,
-                       NULL,
-                       SDL_FLIP_NONE,
-                       fireball->texture);
      fireball->x += FIREBALL_SPEED;
-
     } else {
-        game_renderTexture(fireball->x,
-                       fireball->y,
-                       29,
-                       35,
-                       current,
-                       360,
-                       NULL,
-                       SDL_FLIP_HORIZONTAL,
-                       fireball->texture);
      fireball->x -= FIREBALL_SPEED;
-
     }
+    
     game_renderTexture(fireball->x,
                        fireball->y,
                        29,
