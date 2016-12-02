@@ -4,6 +4,7 @@
 #include "fireball.h"
 #include "mage.h"
 #include "world.h"
+#include "mainmenu.h"
 
 void update_queue_fireball(queue_t *queue);
 
@@ -14,7 +15,7 @@ int main(int argc, char *argv[])
     int quit = 0;
 
     game_init();
-
+    t_menu *menu = init_menu();
     world_t *world = init_world();
     mage_t *mage = init_mage();
     queue_t *queue_fireball = mage->fireballs;
