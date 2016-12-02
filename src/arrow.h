@@ -1,5 +1,5 @@
-#ifndef AMMO_H_
-#define AMMO_H_
+#ifndef ARROW_H_
+#define ARROW_H_
 
 #include "SDL2/SDL.h"
 
