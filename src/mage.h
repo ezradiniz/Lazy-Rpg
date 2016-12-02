@@ -3,6 +3,7 @@
 
 
 #include "fireball.h"
+#include "queue.h"
 #include <SDL2/SDL.h>
 
 #define WALKING_FRAMES 4
@@ -26,7 +27,7 @@ struct mage {
     SDL_Rect jumpSpriteClips[JUMPING_FRAMES];
     SDL_Rect castSpriteClips[CASTING_FRAMES];
     SDL_Rect stopSpriteClips[STOPPING_FRAMES];
-    fireball_t **fireballs;
+    queue_t *fireballs;
     void (*update)(mage_t*);
 };
 

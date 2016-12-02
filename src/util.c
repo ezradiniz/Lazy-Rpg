@@ -5,7 +5,7 @@ void game_init()
 {
     SDL_Init(SDL_INIT_VIDEO);
 
-    wGame = SDL_CreateWindow("MageBotRpg",
+    wGame = SDL_CreateWindow("Pixel Mage",
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
                             SCREEN_WIDTH,

@@ -4,7 +4,7 @@
 
 static void _loadMedia(world_t *world)
 {
-    world->texture = game_loadTexture("img/background.png");
+    world->texture = game_loadTexture("img/bg.jpg");
 }
 
 static void _update(world_t *world)
@@ -18,8 +18,8 @@ world_t *init_world()
 
     world->x = 0;
     world->y = 0;
-    _loadMedia(world);
     world->update = _update;
+    _loadMedia(world);
 
     return world;
 

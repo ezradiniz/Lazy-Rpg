@@ -74,6 +74,13 @@ static void _update(fireball_t *fireball)
 
 }
 
+void free_fireball(void *data)
+{
+
+}
+
+
+
 fireball_t *init_fireball()
 {
     fireball_t *fireball = malloc(sizeof(fireball_t));

@@ -20,5 +20,6 @@ struct fireball {
 };
 
 fireball_t *init_fireball();
+void free_fireball(void *data);
 
 #endif

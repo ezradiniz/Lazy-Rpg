@@ -117,19 +117,16 @@ void _update(mage_t *mage)
          if (mage->frame != CASTING_FRAMES-1) {
              mage->attack = 1;
          }else {
-            int i;
-             for (i=0; i<MAX_FIREBALLS; i++) {
-                 if (mage->fireballs[i] == NULL) {
-                     mage->fireballs[i] = init_fireball();
-                     mage->fireballs[i]->x = mage->x + 28;
-                     mage->fireballs[i]->y = mage->y + 17;
-                     mage->fireballs[i]->direction = mage->direction;
-                     break;
-                }
-            }
-             mage->attack = 0;
-             mage->frame = 0;
-             mage->casting = 0;
+            fireball_t *fireball = init_fireball();
+            fireball->x = mage->x + 28;
+            fireball->y = mage->y + 17;
+            fireball->direction = mage->direction;
+
+            enqueue(mage->fireballs, fireball);
+
+            mage->attack = 0;
+            mage->frame = 0;
+            mage->casting = 0;
          }
 
     } else if (mage->speed != 0){
@@ -167,7 +164,7 @@ void _update(mage_t *mage)
 
     } else {
 
-        mage->frame = game_animation_frame(mage->startTime, 5, 800, STOPPING_FRAMES);
+        mage->frame = game_animation_frame(mage->startTime, 3, 1500, STOPPING_FRAMES);
         SDL_Rect * current = &mage->stopSpriteClips[mage->frame];
 
         if (mage->jumping == 1 && mage->y > mage->h-35) {
@@ -198,14 +195,14 @@ mage_t *init_mage()
     mage_t *mage = malloc(sizeof(mage_t));
     mage->frame = 0;
     mage->x = 200;
-    mage->y = mage->h = 420;
+    mage->y = mage->h = 400;
     mage->jumping = 0;
     mage->startTime = SDL_GetTicks();
     mage->speed = 0;
     mage->direction = 1;
     mage->attack = 0;
     mage->casting = 0;
-    mage->fireballs = calloc(MAX_FIREBALLS, sizeof(fireball_t*));
+    mage->fireballs = init_queue(free_fireball);
     mage->update = _update;
     _mageLoadMedia(mage);
 

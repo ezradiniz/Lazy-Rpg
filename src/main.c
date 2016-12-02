@@ -5,17 +5,19 @@
 #include "mage.h"
 #include "world.h"
 
+void update_queue_fireball(queue_t *queue);
+
 int main(int argc, char *argv[])
 {
     SDL_Event e;
 
-    int quit = 0, i;
+    int quit = 0;
 
     game_init();
 
     world_t *world = init_world();
     mage_t *mage = init_mage();
-    fireball_t **fireballs = mage->fireballs;
+    queue_t *queue_fireball = mage->fireballs;
 
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
@@ -34,7 +36,11 @@ int main(int argc, char *argv[])
                     case SDLK_SPACE:
                         if (mage->attack != 1)
                             mage->startTime = SDL_GetTicks();
-                       mage->attack = 1;
+                        mage->attack = 1;
+                        break;
+                    case SDLK_UP:
+                        mage->startTime = SDL_GetTicks();
+                        mage->jumping = 1;
                         break;
                                    }
             }else if (e.type == SDL_KEYUP) {
@@ -48,8 +54,8 @@ int main(int argc, char *argv[])
                         mage->speed = 0;
                         break;
                      case SDLK_UP:
-                        mage->startTime = SDL_GetTicks();
-                        mage->jumping = 1;
+                        // mage->startTime = SDL_GetTicks();
+                        // mage->jumping = 1;
                         break;
 
                 }
@@ -62,11 +68,7 @@ int main(int argc, char *argv[])
 
         mage->update(mage);
 
-        for (i=0; i<MAX_FIREBALLS; i++) {
-            if (fireballs[i] != NULL) {
-                fireballs[i]->update(fireballs[i]);
-            }
-        }
+        update_queue_fireball(queue_fireball);
 
         SDL_Delay(4);
         SDL_RenderPresent(wRenderer);
@@ -75,4 +77,15 @@ int main(int argc, char *argv[])
     game_close();
 
     return 0;
+}
+
+void update_queue_fireball(queue_t *queue)
+{
+    fireball_t *fireball;
+    node_t *node = queue->head;
+    while (node != NULL) {
+        fireball = node->data;
+        fireball->update(fireball);
+        node = node->next;
+    }
 }
