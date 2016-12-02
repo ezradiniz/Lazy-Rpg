@@ -6,7 +6,7 @@
 
 static void _mageLoadMedia(mage_t *mage)
 {
-    mage->texture = game_loadTexture("img/mage.png");
+    mage->texture = game_loadTexture("img/mage.png", 128, 128, 128);
 
     // walk
 

@@ -19,14 +19,14 @@ void game_init()
     IMG_Init(IMG_INIT_PNG);
 }
 
-SDL_Texture *game_loadTexture(const char *path)
+SDL_Texture *game_loadTexture(const char *path, int r, int g, int b)
 {
     SDL_Texture *texture = NULL;
     SDL_Surface *surface = IMG_Load(path);
 
     SDL_SetColorKey(surface,
                     SDL_TRUE,
-                    SDL_MapRGB(surface->format, 128, 128, 128));
+                    SDL_MapRGB(surface->format, r, g, b));
 
     texture = SDL_CreateTextureFromSurface(wRenderer, surface);
     SDL_FreeSurface(surface);

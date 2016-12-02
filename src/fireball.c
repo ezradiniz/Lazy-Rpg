@@ -7,7 +7,7 @@
 static void _loadMedia(fireball_t *fireball)
 {
 
-    fireball->texture = game_loadTexture("img/fireball.png");
+    fireball->texture = game_loadTexture("img/fireball.png", 128, 128, 128);
 
     fireball->spriteClips[0].x = 11;
     fireball->spriteClips[0].y = 12;
