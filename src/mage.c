@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "util.h"
 #include "mage.h"
+#include "bigfireball.h"
 
 
 static void _mageLoadMedia(mage_t *mage)
@@ -128,8 +129,37 @@ static void _update(mage_t *mage)
             mage->frame = 0;
             mage->casting = 0;
          }
+		//work in progress (attack 2)
+    } else if(mage->attack == 2){
+    	
+    	 mage->frame = game_animation_frame(mage->startTime, 12, 1300, CASTING_FRAMES);
 
-    } else if (mage->speed != 0){
+         game_renderTexture(mage->x,
+                        mage->y,
+                        71,
+                        71,
+                        &mage->castSpriteClips[mage->frame],
+                        360,
+                        NULL,
+                        (mage->direction == 1) ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL,
+                        mage->texture);
+         if (mage->frame != CASTING_FRAMES-1) {
+             mage->attack = 2;
+         }else {
+            bigfireball_t *bigfireball = init_bigfireball();
+            bigfireball->x = mage->x + 28;
+            bigfireball->y = mage->y + -20;
+            bigfireball->direction = mage->direction;
+
+            enqueue(mage->bigfireballs, bigfireball);
+
+            mage->attack = 0;
+            mage->frame = 0;
+            mage->casting = 0;
+         }
+    	
+    	
+	} else if (mage->speed != 0){
 
         mage->frame = game_animation_frame(mage->startTime, 4, 500, WALKING_FRAMES);
 
@@ -203,6 +233,7 @@ mage_t *init_mage()
     mage->attack = 0;
     mage->casting = 0;
     mage->fireballs = init_queue(free_fireball);
+    mage->bigfireballs = init_queue(free_bigfireball);
     mage->update = _update;
     _mageLoadMedia(mage);
 
