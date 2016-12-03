@@ -3,7 +3,7 @@
 
 static void _loadMedia(particle_t *particle)
 {
-	particle->texture = game_loadTexture("img/effect.png");
+	particle->texture = game_loadTexture("img/effect.png",3,101,93);
 
 }
 

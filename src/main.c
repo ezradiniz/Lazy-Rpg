@@ -6,6 +6,7 @@
 #include "world.h"
 #include "arrow.h"
 #include "archer.h"
+#include "mainmenu.h"
 
 void update_queue_arrow(queue_t *queue);
 void update_queue_fireball(queue_t *queue);
@@ -15,9 +16,8 @@ int main(int argc, char *argv[])
     SDL_Event e;
 
     int quit = 0;
-
     game_init();
-    
+    //t_menu *menu = init_menu();
     world_t *world = init_world();
     mage_t *mage = init_mage();
     archer_t *archer = init_archer();
@@ -25,9 +25,14 @@ int main(int argc, char *argv[])
     queue_t *queue_fireball = mage->fireballs;
     queue_t *queue_arrow = archer->arrows;
 
+/*pe�o aos meus companheiros de grupo para n�o descomentarem minhas chamadas de fun��o, obrigado att fael <3 
+e ezra, n tira meu include ali, valeu*/
 
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
+//        	if(!mouse_getPos(&e,menu)){
+//        		quit = 1;
+//			}
             if (e.type == SDL_QUIT)
                 quit = 1;
             else if( e.type == SDL_KEYDOWN ) {
@@ -88,7 +93,6 @@ int main(int argc, char *argv[])
         SDL_RenderClear(wRenderer);
 
         world->update(world);
-
         mage->update(mage);
         archer->update(archer);
 
