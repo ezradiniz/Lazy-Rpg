@@ -1,8 +1,7 @@
-#ifndef ARROW_H
-#define ARROW_H
+#ifndef ARROW_H_
+#define ARROW_H_
 
-
-#include "SDL2/SDL.h"	
+#include "SDL2/SDL.h"
 
 #define ARROW_FRAMES 1
 #define MAX_ARROWS 100

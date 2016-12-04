@@ -1,7 +1,7 @@
 #ifndef AMMO_H_
 #define AMMO_H_
 
-#include <SDL2/SDL.h>
+#include "SDL2/SDL.h"
 
 #define FIREBALL_FRAMES 4
 #define MAX_FIREBALLS 100

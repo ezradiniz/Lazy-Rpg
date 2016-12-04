@@ -42,7 +42,7 @@ static void _update(fireball_t *fireball)
     } else {
      fireball->x -= FIREBALL_SPEED;
     }
-
+    
     game_renderTexture(fireball->x,
                        fireball->y,
                        29,

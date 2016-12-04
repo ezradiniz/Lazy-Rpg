@@ -1,7 +1,7 @@
 #ifndef _WORLD_H_
 #define _WORLD_H_
 
-#include <SDL2/SDL.h>
+#include "SDL2/SDL.h"
 
 typedef struct world world_t;
 struct world {

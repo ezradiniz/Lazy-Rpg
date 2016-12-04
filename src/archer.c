@@ -9,7 +9,7 @@ static void _archerLoadMedia(archer_t *archer)
     archer->texture = game_loadTexture("img/archer.png",255,33,211);
 
     // walk
-
+//
     archer->walkSpriteClips[0].x = 191;
     archer->walkSpriteClips[0].y = 74;
     archer->walkSpriteClips[0].w = 64;
@@ -116,6 +116,7 @@ static void _update(archer_t *archer)
             arrow->direction = archer->direction;
 
             enqueue(archer->arrows, arrow);
+            
 
             archer->attack = 0;
             archer->frame = 0;
@@ -187,8 +188,8 @@ archer_t *init_archer()
 {
     archer_t *archer = malloc(sizeof(archer_t));
     archer->frame = 0;
-    archer->x = 400;
-    archer->y = archer->h = 400;
+    archer->x = 550;
+    archer->y = archer->h = 415;
     archer->jumping = 0;
     archer->startTime = SDL_GetTicks();
     archer->speed = 0;

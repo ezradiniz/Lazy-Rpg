@@ -14,6 +14,8 @@ static void _loadMedia(arrow_t *arrow)
     arrow->spriteClips[0].w = 48;
     arrow->spriteClips[0].h = 20;
 
+
+
 }
 
 static void _update(arrow_t *arrow)

@@ -1,4 +1,4 @@
-#include <SDL2/SDL_image.h>
+#include "SDL2/SDL_image.h"
 #include "util.h"
 
 void game_init()
@@ -8,8 +8,8 @@ void game_init()
     wGame = SDL_CreateWindow("Pixel Mage",
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
-                            SCREEN_WIDTH,
-                            SCREEN_HEIGHT,
+                            1070,
+                            600,
                             0);
 
     wRenderer = SDL_CreateRenderer(wGame,

@@ -1,95 +1,55 @@
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
 #include "mainmenu.h"
 #include "util.h"
-#include "world.h"
 #include <stdio.h>
-#include <stdbool.h>
-
-int mouse_x = 0;
-int mouse_y = 0;
-bool play = false;
-SDL_Rect bg_rect;
-SDL_Rect play_rect;
-SDL_Rect exit_rect;	
-t_menu *menu;
-
-t_menu* load_menu_media(t_menu *menu){
-	
-	menu->background = game_loadTexture("img/backgroundMenu.png",-1,-1,-1);
-	menu->play = game_loadTexture("img/playselect.bmp",-1,-1,-1);
-	menu->exit = game_loadTexture("img/exitselect.bmp",-1,-1,-1);
-	return menu;
+ 
+static void _loadMedia(menu_t *menu){
+    menu->texture[0] = game_loadTexture("img/defaultmenu.png", -1, -1, -1);
+    menu->texture[1] = game_loadTexture("img/playselect.png", -1, -1, -1);
+    menu->texture[2] = game_loadTexture("img/easyselect.png",-1,-1,-1);
+    menu->texture[3] = game_loadTexture("img/exitselect.png",-1,-1,-1);
 }
 
-void update_menu_play(t_menu *menu){
-	int flag = SDL_RenderCopy(wRenderer,menu->play,NULL,NULL);
-	if(flag < 0){
-		printf("Failed to load menu media SDL ERROR: %s",SDL_GetError());
-	}
-	
-}
-
-void update_menu_exit(t_menu *menu){
-	int flag = SDL_RenderCopy(wRenderer,menu->exit,NULL,NULL);
-	if(flag < 0){
-		printf("Failed to load menu media SDL ERROR: %s",SDL_GetError());
-	}
-}
-
-t_menu* init_menu(){	
-
-	menu = malloc(sizeof(t_menu));
-
-	//bg rect
-	bg_rect.x = 0;
-	bg_rect.y = 0;
-	bg_rect.w = 1070;
-	bg_rect.h = 600;
-	
-	
-	//play rect
-	play_rect.x = 427;
-	play_rect.y = 332;
-	play_rect.w = 226;
-	play_rect.h = 45;
-	
-	
-	//exit rect
-	exit_rect.x = 427;
-	exit_rect.y = 426;
-	exit_rect.w = 226;
-	exit_rect.h = 45;	
-	
-	//easy rect
-	
-	//medium rect
-	
-	//hard rect
-	
-	menu = load_menu_media(menu);
-	update_menu_play(menu);
-	
-	return menu;
-}
-
-bool mouse_getPos(SDL_Event event,t_menu *menu){
-	bool flag = false;
-	//update_menu_play(menu);
-	SDL_GetMouseState(&mouse_x,&mouse_y);
-		
-	while(!flag){
-		while(SDL_PollEvent(&event)){
-			if(event.type == SDL_QUIT){
-				flag = true;
-			}else if(event.type == SDL_MOUSEMOTION){
-				if(mouse_x >= play_rect.x && mouse_x <= play_rect.x + play_rect.w && mouse_y >= play_rect.y && mouse_y <= play_rect.y + play_rect.h){
-					update_menu_play(menu);
-				}else if(mouse_x >= exit_rect.x && mouse_x <= exit_rect.x + exit_rect.w && mouse_y >= exit_rect.y && mouse_y <= exit_rect.y + exit_rect.h){
-					update_menu_exit(menu);
+static int _update(menu_t *menu){
+    SDL_Event event;
+    int flag = -1;
+    while(flag < 0){
+        while(SDL_PollEvent(&event)){
+            if(event.type == SDL_QUIT){
+                flag = 1;
+            }else if(event.type == SDL_MOUSEMOTION){
+                if(event.button.x >= 427 && event.button.x <= 653 && event.button.y >= 332 && event.button.y <= 383){
+                    menu->frame = 1;
+                }else if(event.button.x >= 427 && event.button.x <= 653 && event.button.y >= 384 && event.button.y <= 422){
+                	menu->frame = 2;
+				} else if(event.button.x >= 427 && event.button.x <= 653 && event.button.y >= 423 && event.button.y <= 475){
+                    menu->frame = 3;
+                }else{
+                	menu->frame = 0;
+				}
+            }else if(event.type == SDL_MOUSEBUTTONDOWN){
+            	if(menu->frame == 3){
+            		flag = 99;
+				}else if(menu->frame == 1){
+					return menu->frame;
 				}
 			}
-		}
-	}
-	return flag;		
+        }
+        SDL_SetRenderDrawColor(wRenderer, 0, 0, 0, 0);
+        SDL_RenderClear(wRenderer);
+        SDL_RenderCopy(wRenderer, menu->texture[menu->frame], NULL, NULL);
+        SDL_Delay(10);
+        SDL_RenderPresent(wRenderer);
+    }  
+    return flag;       
+}
+
+menu_t* init_menu()
+{   
+ 
+    menu_t *menu = malloc(sizeof(menu_t));
+    menu->frame = 0;
+    _loadMedia(menu);
+    menu->update = _update;
+
+    return menu;
 }
