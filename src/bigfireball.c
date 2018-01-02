@@ -1,5 +1,6 @@
 #include "bigfireball.h"
 #include "util.h"
+#include "collision.h"
 #include <stdlib.h>
 
 
@@ -62,10 +63,37 @@ static void _update(bigfireball_t *bigfireball)
 
 void free_bigfireball(void *data)
 {
-
+    node_t *node = data;
+    bigfireball_t *bigfireball = node->data;
+    SDL_DestroyTexture(bigfireball->texture);
+    free(bigfireball);
 }
 
+void update_queue_bigfireball(queue_t *queue)
+{
+    bigfireball_t *bigfireball = NULL;
+    node_t *node = queue->head;
+    while (node != NULL) {
+        bigfireball = node->data;
+        bigfireball->update(bigfireball);
+        node = node->next;
+        if (bigfireball->x <= 0 || bigfireball->x >= SCREEN_WIDTH)
+            dequeue(queue);
+    }
+}
 
+int hasIntersectionBigFireball(queue_t *queue, int x, int y, int w, int h)
+{
+    node_t *node;
+    bigfireball_t *bigfireball;
+    for (node = queue->head; node != NULL; node = node->next) {
+        bigfireball = node->data;
+        if (hasCollision(bigfireball->x, bigfireball->y, 71, 74, x, y, w, h)) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 bigfireball_t *init_bigfireball()
 {

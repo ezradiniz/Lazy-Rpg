@@ -12,6 +12,7 @@ SDL_Window *wGame;
 
 void game_init();
 SDL_Texture *game_loadTexture(const char *path, int r, int g, int b);
+SDL_Texture *game_loadImagesWithoutTransparency(const char *path);
 void game_renderTexture(int x, int y,
                         int w, int h,
                         SDL_Rect *clip,

@@ -1,12 +1,12 @@
 #include "queue.h"
 
-static node_t* delete(node_t *node, void (*free_node)(void *))
+static node_t* delete_node(node_t *node, void (*free_node)(void *))
 {
 
+	node_t* tmp;
 	if(node != NULL){
-		node_t* tmp;
 		tmp = node;
-		node=node->next;
+		node = node->next;
 		free_node(tmp);
 		free(tmp);
 	}
@@ -18,7 +18,7 @@ static node_t* free_node_t(node_t *node, void (*free_node)(void *))
 {
 
 	while(node!=NULL){
-		node = delete(node, free_node);
+		node = delete_node(node, free_node);
 	}
 	return node;
 
@@ -42,12 +42,12 @@ void enqueue(queue_t *queue, void *data)
 
 void dequeue(queue_t* queue)
 {
-	queue->head = delete(queue->head, queue->free_node);
+	queue->head = delete_node(queue->head, queue->free_node);
 	if(queue->head==NULL){
 		queue->head=NULL;
 	}
-
-	queue->length -= 1;
+	if (queue->length > 0)
+		queue->length -= 1;
 }
 
 void free_queue(queue_t* queue)

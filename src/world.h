@@ -3,14 +3,17 @@
 
 #include "SDL2/SDL.h"
 
+#define WORLD_MAPS 3
+
 typedef struct world world_t;
 struct world {
-    int x;
     int y;
-    SDL_Texture *texture;
+    int frame;
+    SDL_Texture *texture[WORLD_MAPS];
     void (*update)(world_t *);
 };
 
 world_t *init_world();
+void destroy_world(world_t *);
 
 #endif

@@ -8,8 +8,8 @@ void game_init()
     wGame = SDL_CreateWindow("Pixel Mage",
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
-                            1070,
-                            600,
+                            SCREEN_WIDTH,
+                            SCREEN_HEIGHT,
                             0);
 
     wRenderer = SDL_CreateRenderer(wGame,

@@ -1,6 +1,7 @@
 #ifndef BIGFIREBALL_H_
 #define BIGFIREBALL_H_
 
+#include "queue.h"
 #include "SDL2/SDL.h"
 
 #define BIGFIREBALL_FRAMES 5
@@ -21,5 +22,7 @@ struct bigfireball {
 
 bigfireball_t *init_bigfireball();
 void free_bigfireball(void *data);
+void update_queue_bigfireball(queue_t *queue);
+int hasIntersectionBigFireball(queue_t *queue, int x, int y, int w, int h);
 
 #endif

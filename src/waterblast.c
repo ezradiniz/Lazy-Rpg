@@ -1,5 +1,6 @@
 #include "waterblast.h"
 #include "util.h"
+#include "collision.h"
 #include <stdlib.h>
 
 
@@ -37,24 +38,55 @@ static void _update(waterblast_t *waterblast)
      waterblast->x -= WATERBLAST_SPEED;
 
     }
-    game_renderTexture(waterblast->x,
-                       waterblast->y,
-                       47,
-                       64,
-                       current,
-                       360,
-                       NULL,
-                       (waterblast->direction == 1) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE,
-                       waterblast->texture);
-
+    if (waterblast->is_alive) {
+        game_renderTexture(waterblast->x,
+                           waterblast->y,
+                           47,
+                           64,
+                           current,
+                           360,
+                           NULL,
+                           (waterblast->direction == 1) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE,
+                           waterblast->texture);
+    }
 }
 
 void free_waterblast(void *data)
 {
-
+    node_t *node = data;
+    waterblast_t *waterblast = node->data;
+    SDL_DestroyTexture(waterblast->texture);
+    free(waterblast);
 }
 
+void update_queue_waterblast(queue_t *queue)
+{
+    waterblast_t *waterblast = NULL;
+    node_t *node = queue->head;
+    while (node != NULL) {
+        waterblast = node->data;
+        waterblast->update(waterblast);
+        node = node->next;
+        if (waterblast->x <= 0 || waterblast->x >= SCREEN_WIDTH)
+            dequeue(queue);
+    }
+}
 
+int hasIntersectionWaterblast(queue_t *queue, int x, int y, int w, int h)
+{
+    waterblast_t *waterblast;
+    node_t *node = queue->head;
+    while (node != NULL) {
+        waterblast = node->data;
+        if (hasCollision(waterblast->x, waterblast->y, 30, 30, x, y, w, h)) {
+            waterblast->is_alive = 0;
+            return 1;
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
 
 waterblast_t *init_waterblast()
 {
@@ -62,6 +94,7 @@ waterblast_t *init_waterblast()
     waterblast->x = 0;
     waterblast->y = 0;
     waterblast->direction = 1;
+    waterblast->is_alive = 1;
     waterblast->startTime = SDL_GetTicks();
     _loadMedia(waterblast);
     waterblast->update = _update;

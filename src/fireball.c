@@ -1,7 +1,7 @@
 #include "fireball.h"
 #include "util.h"
+#include "collision.h"
 #include <stdlib.h>
-
 
 
 static void _loadMedia(fireball_t *fireball)
@@ -34,6 +34,7 @@ static void _loadMedia(fireball_t *fireball)
 
 static void _update(fireball_t *fireball)
 {
+   
     int frame = game_animation_frame(fireball->startTime, 4, 500, FIREBALL_FRAMES);
     SDL_Rect *current = &fireball->spriteClips[frame];
 
@@ -42,25 +43,62 @@ static void _update(fireball_t *fireball)
     } else {
      fireball->x -= FIREBALL_SPEED;
     }
-    
-    game_renderTexture(fireball->x,
-                       fireball->y,
-                       29,
-                       35,
-                       current,
-                       360,
-                       NULL,
-                       (fireball->direction == 1) ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL,
-                       fireball->texture);
 
+    if (fireball->is_alive) {
+        game_renderTexture(fireball->x,
+                           fireball->y,
+                           29,
+                           35,
+                           current,
+                           360,
+                           NULL,
+                           (fireball->direction == 1) ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL,
+                           fireball->texture);
+    }
 }
 
 void free_fireball(void *data)
 {
-
+    node_t *node = data;
+    fireball_t *fireball = node->data;
+    SDL_DestroyTexture(fireball->texture);
+    free(fireball);
 }
 
+void update_queue_fireball(queue_t *queue)
+{
+    fireball_t *fireball = NULL;
+    node_t *node = queue->head;
+    while (node != NULL) {
+        fireball = node->data;
+        fireball->update(fireball);
 
+        node = node->next;
+        if (fireball->x <= 0 || fireball->x >= SCREEN_WIDTH)
+            dequeue(queue);
+    }
+}
+
+// 33, 46
+int hasIntersectionFireball(queue_t *queue, int x, int y, int w, int h) 
+{
+    fireball_t *fireball;
+    node_t *node = queue->head;
+    while (node != NULL) {
+        fireball = node->data;
+        if ((fireball->x >= x+w && fireball->direction == 1 && fireball->x <= x+2*w) || 
+            (fireball->x <= x-w && fireball->direction == -1 && fireball->x >= x-2*w)) {
+            fireball->is_alive = 0;
+        }
+        if (hasCollision(fireball->x, fireball->y, 20,16, x, y, w, h) && fireball->is_alive) {
+            return 1;
+        }
+        
+        node = node->next;
+    }
+    
+    return 0;
+}
 
 fireball_t *init_fireball()
 {
@@ -68,6 +106,7 @@ fireball_t *init_fireball()
     fireball->x = 0;
     fireball->y = 0;
     fireball->direction = 1;
+    fireball->is_alive = 1;
     fireball->startTime = SDL_GetTicks();
     _loadMedia(fireball);
     fireball->update = _update;

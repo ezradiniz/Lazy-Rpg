@@ -1,5 +1,6 @@
 #include "arrow.h"
 #include "util.h"
+#include "collision.h"
 #include <stdlib.h>
 
 
@@ -13,8 +14,6 @@ static void _loadMedia(arrow_t *arrow)
     arrow->spriteClips[0].y = 146;
     arrow->spriteClips[0].w = 48;
     arrow->spriteClips[0].h = 20;
-
-
 
 }
 
@@ -32,24 +31,53 @@ static void _update(arrow_t *arrow)
      arrow->x -= ARROW_SPEED;
 
     }
-    game_renderTexture(arrow->x,
-                       arrow->y,
-                       48,
-                       20,
-                       current,
-                       360,
-                       NULL,
-                       (arrow->direction == 1) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE,
-                       arrow->texture);
-
+    if (arrow->is_alive) {
+        game_renderTexture(arrow->x,
+                           arrow->y,
+                           48,
+                           20,
+                           current,
+                           360,
+                           NULL,
+                           (arrow->direction == 1) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE,
+                           arrow->texture);
+    }
 }
 
 void free_arrow(void *data)
 {
-
+    node_t *node = data;
+    arrow_t *arrow = node->data;
+    SDL_DestroyTexture(arrow->texture);
+    free(arrow);
 }
 
+void update_queue_arrow(queue_t *queue)
+{
+    arrow_t *arrow = NULL;
+    node_t *node = queue->head;
+    while (node != NULL) {
+        arrow = node->data;
+        arrow->update(arrow);
+        node = node->next;
+        if (arrow->x <= 0 || arrow->x >= SCREEN_WIDTH)
+            dequeue(queue);
+    }
+}
 
+int hasIntersectionArrow(queue_t *queue, int x, int y, int w, int h)
+{
+    node_t *node;
+    arrow_t *arrow;
+    for (node = queue->head; node != NULL; node = node->next) {
+        arrow = node->data;
+        if (hasCollision(arrow->x, arrow->y, 33, 2, x, y, w, h) && arrow->is_alive) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
 
 arrow_t *init_arrow()
 {
@@ -57,6 +85,7 @@ arrow_t *init_arrow()
     arrow->x = 0;
     arrow->y = 0;
     arrow->direction = 1;
+    arrow->is_alive = 1;
     arrow->startTime = SDL_GetTicks();
     _loadMedia(arrow);
     arrow->update = _update;

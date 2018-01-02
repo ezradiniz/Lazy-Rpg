@@ -20,6 +20,8 @@ struct archer {
     short int frame;
     short int attack;
     short int shooting;
+    int is_alive;
+    int hit;
     long int startTime;
     SDL_Texture *texture;
     SDL_Rect walkSpriteClips[WALK_FRAMES];
@@ -30,6 +32,6 @@ struct archer {
 };
 
 archer_t *init_archer();
-
+void destroy_archer(archer_t *);
 
 #endif

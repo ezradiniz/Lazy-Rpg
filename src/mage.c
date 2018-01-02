@@ -103,6 +103,8 @@ static void _mageLoadMedia(mage_t *mage)
 static void _update(mage_t *mage)
 {
 
+    if (!mage->is_alive)
+        return;
     if (mage->attack == 1) {
          mage->frame = game_animation_frame(mage->startTime, 12, 1300, CASTING_FRAMES);
 
@@ -120,7 +122,7 @@ static void _update(mage_t *mage)
          }else {
             fireball_t *fireball = init_fireball();
             fireball->x = mage->x + 28;
-            fireball->y = mage->y + 17;
+            fireball->y = mage->y + 20;
             fireball->direction = mage->direction;
 
             enqueue(mage->fireballs, fireball);
@@ -159,16 +161,40 @@ static void _update(mage_t *mage)
          }
     	
     	
-	} else if (mage->speed != 0){
+	} else if(mage->attack == 3){
+        
+         mage->frame = game_animation_frame(mage->startTime, 12, 1300, CASTING_FRAMES);
+
+         game_renderTexture(mage->x,
+                        mage->y,
+                        71,
+                        71,
+                        &mage->castSpriteClips[mage->frame],
+                        360,
+                        NULL,
+                        (mage->direction == 1) ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL,
+                        mage->texture);
+         if (mage->frame != CASTING_FRAMES-1) {
+             mage->attack = 3;
+         }else {
+            mage->attack = 0;
+            mage->frame = 0;
+            mage->casting = 0;
+         }
+        
+        
+    } else if (mage->speed != 0){
 
         mage->frame = game_animation_frame(mage->startTime, 4, 500, WALKING_FRAMES);
 
         SDL_Rect * current = &mage->walkSpriteClips[mage->frame];
 
         if (mage->direction == 1) {
-             mage->x += mage->speed;
+            if (mage->x <= SCREEN_WIDTH-70)
+                mage->x += mage->speed;
         } else if (mage->direction == -1){
-             mage->x -= mage->speed;
+            if (mage->x >= 0)
+                 mage->x -= mage->speed;
         }
 
         if (mage->jumping == 1 && mage->y > mage->h-35) {
@@ -220,17 +246,29 @@ static void _update(mage_t *mage)
     }
 }
 
+void destroy_mage(mage_t *mage)
+{
+    SDL_DestroyTexture(mage->texture);
+    free_queue(mage->fireballs);
+    free(mage->fireballs);
+    free_queue(mage->bigfireballs);
+    free(mage->bigfireballs);
+    free(mage);
+}
+
 mage_t *init_mage()
 {
     mage_t *mage = malloc(sizeof(mage_t));
     mage->frame = 0;
     mage->x = 200;
-    mage->y = mage->h = 400;
+    mage->y = 400;
+    mage->h = 400;
     mage->jumping = 0;
     mage->startTime = SDL_GetTicks();
     mage->speed = 0;
     mage->direction = 1;
     mage->attack = 0;
+    mage->is_alive = 1;
     mage->casting = 0;
     mage->fireballs = init_queue(free_fireball);
     mage->bigfireballs = init_queue(free_bigfireball);

@@ -9,7 +9,7 @@ static void _archerLoadMedia(archer_t *archer)
     archer->texture = game_loadTexture("img/archer.png",255,33,211);
 
     // walk
-//
+
     archer->walkSpriteClips[0].x = 191;
     archer->walkSpriteClips[0].y = 74;
     archer->walkSpriteClips[0].w = 64;
@@ -94,7 +94,14 @@ static void _archerLoadMedia(archer_t *archer)
 
 static void _update(archer_t *archer)
 {
+    if (archer->hit) {
+        int delay  = game_animation_frame(archer->startTime, 3, 1300, 3);
+        if (delay == 2) {
+            archer->is_alive = 0;
+        }
 
+        return;
+    }
     if (archer->attack == 1) {
          archer->frame = game_animation_frame(archer->startTime, 12, 1300, SHOOTING_FRAMES);
 
@@ -116,7 +123,6 @@ static void _update(archer_t *archer)
             arrow->direction = archer->direction;
 
             enqueue(archer->arrows, arrow);
-            
 
             archer->attack = 0;
             archer->frame = 0;
@@ -184,6 +190,14 @@ static void _update(archer_t *archer)
     }
 }
 
+void destroy_archer(archer_t *archer)
+{
+    SDL_DestroyTexture(archer->texture);
+    free_queue(archer->arrows);
+    free(archer->arrows);
+    free(archer);
+}
+
 archer_t *init_archer()
 {
     archer_t *archer = malloc(sizeof(archer_t));
@@ -196,6 +210,8 @@ archer_t *init_archer()
     archer->direction = -1;
     archer->attack = 0;
     archer->shooting = 0;
+    archer->is_alive = 1;
+    archer->hit = 0;
     archer->arrows = init_queue(free_arrow);
     archer->update = _update;
     _archerLoadMedia(archer);

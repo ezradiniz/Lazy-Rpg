@@ -116,8 +116,22 @@ static void _bluedragonLoadMedia(bluedragon_t *bluedragon)
 static void _update(bluedragon_t *bluedragon)
 {
 
+    if (bluedragon->hit) {
+        if (!bluedragon->is_alive) 
+            return;
+        int delay  = game_animation_frame(bluedragon->startTime, 2, 100, 2); //bot
+        if (delay == 1) {
+            bluedragon->life += 1;
+            if (bluedragon->life >= BLUE_MAX_LIFE) {
+                bluedragon->is_alive = 0;
+                return;
+            }
+        }
+        bluedragon->hit = 0;
+    }
+
     if (bluedragon->attack == 1) {
-         bluedragon->frame = game_animation_frame(bluedragon->startTime, 12, 1300, CASTING_FRAMES);
+         bluedragon->frame = game_animation_frame(bluedragon->startTime, 12, 1300, BLUE_CASTING_FRAMES);
 
          game_renderTexture(bluedragon->x,
                         bluedragon->y,
@@ -128,7 +142,7 @@ static void _update(bluedragon_t *bluedragon)
                         NULL,
                         (bluedragon->direction == 1) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE,
                         bluedragon->texture);
-         if (bluedragon->frame != CASTING_FRAMES-1) {
+         if (bluedragon->frame != BLUE_CASTING_FRAMES-1) {
              bluedragon->attack = 1;
          }else {
             waterb_t *waterb = init_waterb();
@@ -145,7 +159,7 @@ static void _update(bluedragon_t *bluedragon)
 
     } else if(bluedragon->attack == 2){
     	
-    	 bluedragon->frame = game_animation_frame(bluedragon->startTime, 12, 1300, CASTING_FRAMES);
+    	 bluedragon->frame = game_animation_frame(bluedragon->startTime, 12, 1300, BLUE_CASTING_FRAMES);
 
          game_renderTexture(bluedragon->x,
                         bluedragon->y,
@@ -156,12 +170,12 @@ static void _update(bluedragon_t *bluedragon)
                         NULL,
                         (bluedragon->direction == 1) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE,
                         bluedragon->texture);
-         if (bluedragon->frame != CASTING_FRAMES-1) {
+         if (bluedragon->frame != BLUE_CASTING_FRAMES-1) {
              bluedragon->attack = 2;
          }else {
             waterblast_t *waterblast = init_waterblast();
             waterblast->x = bluedragon->x + 28;
-            waterblast->y = bluedragon->y + 14;
+            waterblast->y = bluedragon->y + 30;
             waterblast->direction = bluedragon->direction;
 
             enqueue(bluedragon->waterblasts, waterblast);
@@ -174,7 +188,7 @@ static void _update(bluedragon_t *bluedragon)
     	
 	} else if (bluedragon->speed != 0){
 
-        bluedragon->frame = game_animation_frame(bluedragon->startTime, 4, 500, WALKING_FRAMES);
+        bluedragon->frame = game_animation_frame(bluedragon->startTime, 4, 500, BLUE_WALKING_FRAMES);
 
         SDL_Rect * current = &bluedragon->walkSpriteClips[bluedragon->frame];
 
@@ -186,12 +200,12 @@ static void _update(bluedragon_t *bluedragon)
 
         if (bluedragon->jumping == 1 && bluedragon->y > bluedragon->h-35) {
             bluedragon->y -= 1;
-            bluedragon->frame = game_animation_frame(bluedragon->startTime, 4, 500 * GRAVITY, JUMPING_FRAMES);
+            bluedragon->frame = game_animation_frame(bluedragon->startTime, 4, 500 * GRAVITY, BLUE_JUMPING_FRAMES);
             current = &bluedragon->jumpSpriteClips[bluedragon->frame];
         }else if (bluedragon->y < bluedragon->h+35){
             bluedragon->jumping = 0;
             bluedragon->y += 1;
-            bluedragon->frame = game_animation_frame(bluedragon->startTime, 4, 500 * GRAVITY, JUMPING_FRAMES);
+            bluedragon->frame = game_animation_frame(bluedragon->startTime, 4, 500 * GRAVITY, BLUE_JUMPING_FRAMES);
             current = &bluedragon->jumpSpriteClips[bluedragon->frame];
         }
 
@@ -207,17 +221,17 @@ static void _update(bluedragon_t *bluedragon)
 
     } else {
 
-        bluedragon->frame = game_animation_frame(bluedragon->startTime, 3, 1500, STOPPING_FRAMES);
+        bluedragon->frame = game_animation_frame(bluedragon->startTime, 3, 1500, BLUE_STOPPING_FRAMES);
         SDL_Rect * current = &bluedragon->stopSpriteClips[bluedragon->frame];
 
         if (bluedragon->jumping == 1 && bluedragon->y > bluedragon->h-35) {
             bluedragon->y -= 1;
-            bluedragon->frame = game_animation_frame(bluedragon->startTime, 4, 500 * GRAVITY, JUMPING_FRAMES);
+            bluedragon->frame = game_animation_frame(bluedragon->startTime, 4, 500 * GRAVITY, BLUE_JUMPING_FRAMES);
             current = &bluedragon->jumpSpriteClips[bluedragon->frame];
         }else if (bluedragon->y < bluedragon->h+35){
             bluedragon->jumping = 0;
             bluedragon->y += 1;
-            bluedragon->frame = game_animation_frame(bluedragon->startTime, 4, 500 * GRAVITY, JUMPING_FRAMES);
+            bluedragon->frame = game_animation_frame(bluedragon->startTime, 4, 500 * GRAVITY, BLUE_JUMPING_FRAMES);
             current = &bluedragon->jumpSpriteClips[bluedragon->frame];
         }
 
@@ -233,11 +247,21 @@ static void _update(bluedragon_t *bluedragon)
     }
 }
 
+void destroy_bluedragon(bluedragon_t *bluedragon)
+{
+    SDL_DestroyTexture(bluedragon->texture);
+    free_queue(bluedragon->waterbs);
+    free(bluedragon->waterbs);
+    free_queue(bluedragon->waterblasts);
+    free(bluedragon->waterblasts);
+    free(bluedragon);
+}
+
 bluedragon_t *init_bluedragon()
 {
     bluedragon_t *bluedragon = malloc(sizeof(bluedragon_t));
     bluedragon->frame = 0;
-    bluedragon->x = 300;
+    bluedragon->x = 600;
     bluedragon->y = bluedragon->h = 380;
     bluedragon->jumping = 0;
     bluedragon->startTime = SDL_GetTicks();
@@ -245,6 +269,9 @@ bluedragon_t *init_bluedragon()
     bluedragon->direction = -1;
     bluedragon->attack = 0;
     bluedragon->casting = 0;
+    bluedragon->is_alive = 1;
+    bluedragon->hit = 0;
+    bluedragon->life = 1;
     bluedragon->waterbs = init_queue(free_waterb);
     bluedragon->waterblasts = init_queue(free_waterblast);
     bluedragon->update = _update;
