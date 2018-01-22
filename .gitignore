@@ -72,3 +72,6 @@ src/LICENSE.webp.txt
 src/AAI.layout
 *.layout
 src/AAI.layout
+
+# Game exec
+game
